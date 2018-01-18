@@ -1,0 +1,42 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.thanh.android.quiz_app.MainActivity">
+    <item
+        android:id="@+id/action_settings"
+        android:orderInCategory="100"
+        android:title="@string/action_settings"
+        app:showAsAction="never" />
+
+    <!--todo toolbar 5: Edit menu xml file for display-->
+    <item
+        android:id="@+id/action_test1"
+        android:orderInCategory="100"
+        android:title="Noi dung test 1"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_test2"
+        android:orderInCategory="100"
+        android:title="Noi dung test 2"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_test3"
+        android:orderInCategory="100"
+        android:title="Noi dung test 3"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_test4"
+        android:orderInCategory="100"
+        android:title="Noi dung test 4"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_test5"
+        android:orderInCategory="100"
+        android:title="Noi dung test 5"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_test6"
+        android:orderInCategory="100"
+        android:title="Noi dung test 6"
+        app:showAsAction="never" />
+</menu>
