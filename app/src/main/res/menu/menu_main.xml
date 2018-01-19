@@ -2,13 +2,14 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.thanh.android.quiz_app.MainActivity">
+    <!--todo notification 2: Create item menu for contain button display when click on button -> activity_question_group_display.xml -->
     <item
         android:id="@+id/action_settings"
         android:orderInCategory="100"
         android:title="@string/action_settings"
-        app:showAsAction="never" />
+        app:showAsAction="always" />
 
-    <!--todo toolbar 5: Edit menu xml file for display-->
+    <!--todo toolbar 5: Edit menu xml file for display -> mainActivity.java-->
     <item
         android:id="@+id/action_test1"
         android:orderInCategory="100"

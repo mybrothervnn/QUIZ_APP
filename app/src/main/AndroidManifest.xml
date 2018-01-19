@@ -19,6 +19,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".activity_question_group_display"
+            android:theme="@style/Animation.AppCompat.Dialog"
+            ></activity>
     </application>
 
 </manifest>
