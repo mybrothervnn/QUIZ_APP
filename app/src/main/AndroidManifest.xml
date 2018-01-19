@@ -20,7 +20,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".activity_question_group_display"
-            android:theme="@style/Animation.AppCompat.Dialog"
+            android:theme="@style/Base.AlertDialog.AppCompat"
             ></activity>
     </application>
 
