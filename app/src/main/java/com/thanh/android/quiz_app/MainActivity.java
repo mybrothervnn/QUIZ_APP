@@ -4,7 +4,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.design.widget.TabLayout;
 import android.support.v4.view.MenuItemCompat;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
@@ -14,7 +16,7 @@ import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements TabLayout.OnTabSelectedListener{
     public static String arr_question_group[] = {
             "Intel",
             "SamSung",
@@ -24,6 +26,10 @@ public class MainActivity extends AppCompatActivity {
             "KIC",
             "ECD"
     };
+    //    todo use FragmentStatePagerAdapter 4: Declare TabLayout and ViewPager
+    private TabLayout tabLayout;
+    private ViewPager viewPager;
+    Pager adapter;
     //    todo notification 3: declare layout
     RelativeLayout notificationCount1;
     @Override
@@ -43,7 +49,37 @@ public class MainActivity extends AppCompatActivity {
                         .setAction("Action", null).show();
             }
         });
+        init();
     }
+
+    private void init() {
+        init_FragmentStatePager();
+    }
+
+    private void init_FragmentStatePager() {
+        //    todo use FragmentStatePagerAdapter 5:Initializing the tablayout
+        tabLayout = (TabLayout) findViewById(R.id.tabLayout);
+        //Adding the tabs using addTab() method
+        tabLayout.addTab(tabLayout.newTab().setText("Tab1"));
+        tabLayout.addTab(tabLayout.newTab().setText("Tab2"));
+        tabLayout.addTab(tabLayout.newTab().setText("Tab3"));
+        tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
+
+//    todo use FragmentStatePagerAdapter 6:Initializing viewPager
+        viewPager = (ViewPager) findViewById(R.id.pager);
+
+//    todo use FragmentStatePagerAdapter 7:Creating our pager adapter
+        adapter = new Pager(getSupportFragmentManager(), tabLayout.getTabCount());
+
+//    todo use FragmentStatePagerAdapter 8:Adding adapter to pager
+        viewPager.setAdapter(adapter);
+
+//    todo use FragmentStatePagerAdapter 9:Adding onTabSelectedListener to swipe views
+        tabLayout.setOnTabSelectedListener(this);
+//    todo use FragmentStatePagerAdapter 10:Adding addOnPageChangeListener to swipe Tab -> Pager.java
+        viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
+    }
+
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -88,17 +124,25 @@ public class MainActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         if (id == R.id.action_test1) {
-            Toast.makeText(this, "action_test1", Toast.LENGTH_SHORT).show();
+            //    todo use FragmentStatePagerAdapter 14_END: test remove tab.
+            tabLayout.removeTab(tabLayout.getTabAt(1));
             return true;
         }
         if (id == R.id.action_test2) {
-            Toast.makeText(this, "action_test2", Toast.LENGTH_SHORT).show();
+            //    todo use FragmentStatePagerAdapter 15: test add tab
+            tabLayout.addTab(tabLayout.newTab().setText("added tab OK"));
             return true;
         }
         if (id == R.id.action_test3) {
+            //    todo use FragmentStatePagerAdapter 16: test get item
+            adapter.getItem(tabLayout.getTabCount()-1);
+            adapter.notifyDataSetChanged();
             return true;
         }
         if (id == R.id.action_test4) {
+            //    todo use FragmentStatePagerAdapter 17: test add fragment
+            adapter.addTab();
+            adapter.notifyDataSetChanged();
             return true;
         }
         if (id == R.id.action_test5) {
@@ -109,5 +153,20 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onTabSelected(TabLayout.Tab tab) {
+        viewPager.setCurrentItem(tab.getPosition());
+    }
+
+    @Override
+    public void onTabUnselected(TabLayout.Tab tab) {
+
+    }
+
+    @Override
+    public void onTabReselected(TabLayout.Tab tab) {
+
     }
 }
