@@ -26,7 +26,8 @@ public class Pager extends FragmentStatePagerAdapter {
     @Override
     public Fragment getItem(int position) {
         //Returning the current tabs
-        return Tab.newInstance(position);
+        Question_class result = MainActivity.currArrayListQuesstionGroupClass.get(MainActivity.currQuesstionGroupClass).getQuestionClassArrayList().get(position);
+        return Tab.newInstance(position,result);
     }
 
     //Overriden method getCount to get the number of tabs

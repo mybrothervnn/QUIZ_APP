@@ -16,6 +16,8 @@ import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+
 public class MainActivity extends AppCompatActivity implements TabLayout.OnTabSelectedListener{
     public static String arr_question_group[] = {
             "Intel",
@@ -26,6 +28,16 @@ public class MainActivity extends AppCompatActivity implements TabLayout.OnTabSe
             "KIC",
             "ECD"
     };
+    // Danh sach tên các BỘ câu hỏi dùng để cho người dùng chọn
+    public static ArrayList<String> arrList_question_group = new ArrayList<>();
+    //Danh sách dữ liệu bộ các câu hỏi.
+    public static ArrayList<Quesstion_group_class> currArrayListQuesstionGroupClass;
+    // Bộ câu hỏi hiển thị
+    public static int currQuesstionGroupClass;
+    public static int currQuesstionGroupClass_old;
+    // Câu hỏi hiển thị
+    public static int currQuesstionClass;
+
     //    todo use FragmentStatePagerAdapter 4: Declare TabLayout and ViewPager
     private TabLayout tabLayout;
     private ViewPager viewPager;
@@ -53,16 +65,63 @@ public class MainActivity extends AppCompatActivity implements TabLayout.OnTabSe
     }
 
     private void init() {
+        AI_request_class ai_request_class = new AI_request_class(getApplicationContext());
         init_FragmentStatePager();
+        // Truyền danh sách cho danh sách hiển thị bộ câu hỏi
+        arrList_question_group.addAll(ai_request_class.getCTG_CD_FV_fromListURL());
+        // Danh sách toàn bộ các bộ câu hỏi mà hệ thống yêu cầu phải làm
+        currArrayListQuesstionGroupClass = new ArrayList<>();
+        for (String url:ai_request_class.getListURL()
+                ) {
+            currArrayListQuesstionGroupClass.add(ai_request_class.getQuesstion_group_class_byURL(url));
+        }
+        // Bộ câu hỏi hiển thị
+        currQuesstionGroupClass = 10;
+        // Câu hỏi hiển thị
+        currQuesstionClass = 1;
+        loadQuestionToDisplay(currQuesstionGroupClass);
     }
+
+    private void loadQuestionToDisplay(int currQuesstionGroupClass) {
+        //remove tab
+        //remove viewPager
+
+        //create tab
+        //create pager
+        //------------------------
+        //remove tab
+        tabLayout.removeAllTabs();
+        //remove viewPager
+        viewPager.removeAllViews();
+
+        //create tab
+        int tmp_index = 0;
+        for (Question_class tmp:currArrayListQuesstionGroupClass.get(currQuesstionGroupClass).getQuestionClassArrayList()
+                ) {
+            //tạo 1 tab với tiêu đề ""
+            tabLayout.addTab(tabLayout.newTab().setText("_"+String.valueOf(tmp_index)));
+            //đánh dấu chưa làm
+            tabLayout.getTabAt(tmp_index).setIcon(R.drawable.star_null);
+            tmp_index +=1;
+            //---------
+            //view pager
+//            adapter.addTab();
+//            adapter.notifyDataSetChanged();
+        }
+        //create pager
+        adapter = new Pager(getSupportFragmentManager(),tmp_index);
+        viewPager.setAdapter(adapter);
+        adapter.notifyDataSetChanged();
+    }
+
 
     private void init_FragmentStatePager() {
         //    todo use FragmentStatePagerAdapter 5:Initializing the tablayout
         tabLayout = (TabLayout) findViewById(R.id.tabLayout);
         //Adding the tabs using addTab() method
-        tabLayout.addTab(tabLayout.newTab().setText("Tab1"));
-        tabLayout.addTab(tabLayout.newTab().setText("Tab2"));
-        tabLayout.addTab(tabLayout.newTab().setText("Tab3"));
+//        tabLayout.addTab(tabLayout.newTab().setText("Tab1"));
+//        tabLayout.addTab(tabLayout.newTab().setText("Tab2"));
+//        tabLayout.addTab(tabLayout.newTab().setText("Tab3"));
         tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
 
 //    todo use FragmentStatePagerAdapter 6:Initializing viewPager
@@ -86,8 +145,9 @@ public class MainActivity extends AppCompatActivity implements TabLayout.OnTabSe
         super.onActivityResult(requestCode, resultCode, data);
         //        todo notification 11: mutiply data return from  QuestionGroupDisplay.java ->
         //        todo notification 12_END: edit theme for popup menu to diaglog in AndroidManifest.xml
-        if(requestCode == 1) {
+        if(currQuesstionGroupClass != currQuesstionGroupClass_old) {
             Toast.makeText(this, String.valueOf(data.getIntExtra("position_return", 0)), Toast.LENGTH_SHORT).show();
+            loadQuestionToDisplay(currQuesstionGroupClass);
         }
     }
 

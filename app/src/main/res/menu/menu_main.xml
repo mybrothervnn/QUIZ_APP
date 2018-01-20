@@ -26,6 +26,7 @@
     <item
         android:id="@+id/action_test5"
         android:title="Badge Item 5" />
+
     <item
         android:id="@+id/action_test6"
         android:title="Badge Item 6" />

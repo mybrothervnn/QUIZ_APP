@@ -23,13 +23,18 @@ public class activity_question_group_display extends ListActivity {
         //todo notification 9: set data adapter for this ListActivity.
 
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(getApplicationContext(), android.R.layout.simple_list_item_1
-                ,MainActivity.arr_question_group);
+                ,MainActivity.arrList_question_group);
         setListAdapter(adapter);
     }
     @Override
     protected void onListItemClick(ListView l, View v, int position, long id) {
         super.onListItemClick(l, v, position, id);
 //        todo notification 10: override event when ListActivity item click. -> MainActivity.java
+        // chỉ định bộ câu hỏi được chọn
+        MainActivity.currQuesstionGroupClass_old = MainActivity.currQuesstionGroupClass;
+        MainActivity.currQuesstionGroupClass = position;
+
+        // trả về giá trị trong intent
         Intent intent = getIntent();
         intent.putExtra("position_return", position);
         setResult(1, intent);

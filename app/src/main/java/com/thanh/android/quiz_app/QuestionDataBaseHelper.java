@@ -194,13 +194,15 @@ public class QuestionDataBaseHelper extends SQLiteOpenHelper{
             ArrayList<String> answerArrayList = new ArrayList<>();
             String getQuestionSQL = " select VALUE,RESULT_FLAG from ANSWER_TBL where URL_VALUE = '"+question_URL_VALUE+"' and QUESTION_ORDER = '"+String.valueOf(tmp_num)+"'";
             Cursor cursor1 = myDataBase.rawQuery(getQuestionSQL,null);
+            int tmp_true=0;
             while(cursor1.moveToNext()){
                 //add câu trả lời
                 answerArrayList.add(cursor1.getString(0));
-                //add câu đúng
+                //add câu đúng (câu hỏi nào có số thứ tự = Answer_true thì câu đó đúng.)
                 if (cursor1.getString(1) =="1"){
-                    tmpQuestion_class.setAnswer_true(Integer.parseInt(cursor1.getString(0)));
+                    tmpQuestion_class.setAnswer_true(tmp_true);
                 }
+                tmp_true ++;
             }
             tmp_num +=1;
             tmpQuestion_class.setAnswer(answerArrayList);
