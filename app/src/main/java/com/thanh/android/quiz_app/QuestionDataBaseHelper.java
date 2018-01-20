@@ -15,6 +15,8 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
+
 /**
  * Created by d_thanh on 2018/01/09.
  */
@@ -199,10 +201,10 @@ public class QuestionDataBaseHelper extends SQLiteOpenHelper{
                 //add câu trả lời
                 answerArrayList.add(cursor1.getString(0));
                 //add câu đúng (câu hỏi nào có số thứ tự = Answer_true thì câu đó đúng.)
-                if (cursor1.getString(1) =="1"){
+                if (Objects.equals(cursor1.getString(1), "1")){
                     tmpQuestion_class.setAnswer_true(tmp_true);
                 }
-                tmp_true ++;
+                tmp_true +=1;
             }
             tmp_num +=1;
             tmpQuestion_class.setAnswer(answerArrayList);

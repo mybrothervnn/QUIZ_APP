@@ -19,15 +19,6 @@ import android.widget.Toast;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity implements TabLayout.OnTabSelectedListener{
-    public static String arr_question_group[] = {
-            "Intel",
-            "SamSung",
-            "Nokia",
-            "Simen",
-            "AMD",
-            "KIC",
-            "ECD"
-    };
     // Danh sach tên các BỘ câu hỏi dùng để cho người dùng chọn
     public static ArrayList<String> arrList_question_group = new ArrayList<>();
     //Danh sách dữ liệu bộ các câu hỏi.
@@ -39,8 +30,8 @@ public class MainActivity extends AppCompatActivity implements TabLayout.OnTabSe
     public static int currQuesstionClass;
 
     //    todo use FragmentStatePagerAdapter 4: Declare TabLayout and ViewPager
-    private TabLayout tabLayout;
-    private ViewPager viewPager;
+    public static TabLayout tabLayout;
+    public ViewPager viewPager;
     Pager adapter;
     //    todo notification 3: declare layout
     RelativeLayout notificationCount1;
@@ -99,7 +90,7 @@ public class MainActivity extends AppCompatActivity implements TabLayout.OnTabSe
         for (Question_class tmp:currArrayListQuesstionGroupClass.get(currQuesstionGroupClass).getQuestionClassArrayList()
                 ) {
             //tạo 1 tab với tiêu đề ""
-            tabLayout.addTab(tabLayout.newTab().setText("_"+String.valueOf(tmp_index)));
+            tabLayout.addTab(tabLayout.newTab().setText(String.valueOf(tmp_index)));
             //đánh dấu chưa làm
             tabLayout.getTabAt(tmp_index).setIcon(R.drawable.star_null);
             tmp_index +=1;

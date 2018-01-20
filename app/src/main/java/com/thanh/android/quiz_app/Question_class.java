@@ -1,6 +1,7 @@
 package com.thanh.android.quiz_app;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 /**
  * Created by d_thanh on 2018/01/11.
@@ -11,11 +12,8 @@ public class Question_class {
     private String question;
     private ArrayList<String> answer;
     //------------
-    private int answer_true;
-    private int answer_choose;
-    //boolean isAnswered()
-    //int coun_answer()
-    //boolean isChoose_true()
+    private int answer_true = 999;
+    private int answer_choose = 999;
 
     public Question_class(String question_id) {
         this.question_id = question_id;
