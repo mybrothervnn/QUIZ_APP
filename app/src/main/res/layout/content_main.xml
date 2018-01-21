@@ -26,11 +26,11 @@
     <!--todo use FragmentStatePagerAdapter 2: create ViewPager xml -> Tab.xml -->
     <android.support.v4.view.ViewPager
         android:id="@+id/pager"
-        android:layout_width="368dp"
-        android:layout_height="439dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="16dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"

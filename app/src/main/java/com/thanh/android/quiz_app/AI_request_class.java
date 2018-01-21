@@ -20,7 +20,6 @@ public class AI_request_class {
     public ArrayList<String> getListURL(){
         ArrayList<String> result = new ArrayList<>();
         result.add("14030");
-        result.add("10164");
         result.add("14038");
         result.add("14087");
         result.add("14088");
@@ -31,6 +30,7 @@ public class AI_request_class {
         result.add("14112");
         result.add("14027");
         result.add("13887");
+        result.add("10164");
         result.add("10074");
         result.add("10077");
         result.add("10165");
