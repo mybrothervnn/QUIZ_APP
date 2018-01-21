@@ -84,7 +84,7 @@ public class Question_class {
     }
     //ADD FUNCTION
     public boolean isAnswered(){
-        return answer_choose > 0;
+        return answer_choose > 0 && answer_choose != 999;
     }
     public int coun_answer(){
         return answer.size();

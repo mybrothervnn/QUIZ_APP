@@ -119,6 +119,17 @@ public class Tab extends Fragment {
             });
 
             ln_answer.addView(tmp_TextView);
+            if (tab_question.getAnswer_choose() != 999) {
+                true_view.setBackground(getResources().getDrawable(R.drawable.my_border_answer_true));
+                result.findViewById(listId.get(tab_question.getAnswer_choose())).setBackground(getResources().getDrawable(R.drawable.my_border_answer_choose));
+
+                if (tab_question.isChoose_true()){
+                    true_view.setBackground(getResources().getDrawable(R.drawable.my_border_answer_choose_true));
+                    MainActivity.tabLayout.getTabAt(pos).setIcon(R.drawable.star_ok);
+                }else {
+                    MainActivity.tabLayout.getTabAt(pos).setIcon(R.drawable.star_ng);
+                }
+            }
         }
         return result;
     }
