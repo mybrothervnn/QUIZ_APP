@@ -14,6 +14,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -35,6 +36,8 @@ public class MainActivity extends AppCompatActivity implements TabLayout.OnTabSe
     Pager adapter;
     //    todo notification 3: declare layout
     RelativeLayout notificationCount1;
+
+    TextView txt_question_group_tittle;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -56,18 +59,23 @@ public class MainActivity extends AppCompatActivity implements TabLayout.OnTabSe
     }
 
     private void init() {
+        txt_question_group_tittle = (TextView) findViewById(R.id.txt_question_tittle);
+
         AI_request_class ai_request_class = new AI_request_class(getApplicationContext());
         init_FragmentStatePager();
         // Truyền danh sách cho danh sách hiển thị bộ câu hỏi
         arrList_question_group.addAll(ai_request_class.getCTG_CD_FV_fromListURL());
         // Danh sách toàn bộ các bộ câu hỏi mà hệ thống yêu cầu phải làm
-        currArrayListQuesstionGroupClass = new ArrayList<>();
-        for (String url:ai_request_class.getListURL()
-                ) {
-            currArrayListQuesstionGroupClass.add(ai_request_class.getQuesstion_group_class_byURL(url));
+        if (currArrayListQuesstionGroupClass == null) {
+            currArrayListQuesstionGroupClass = new ArrayList<>();
+            for (String url:ai_request_class.getListURL()
+                    ) {
+                currArrayListQuesstionGroupClass.add(ai_request_class.getQuesstion_group_class_byURL(url));
+            }
         }
+
         // Bộ câu hỏi hiển thị
-        currQuesstionGroupClass = 10;
+        currQuesstionGroupClass = 3;
         // Câu hỏi hiển thị
         currQuesstionClass = 1;
         loadQuestionToDisplay(currQuesstionGroupClass);
@@ -90,7 +98,7 @@ public class MainActivity extends AppCompatActivity implements TabLayout.OnTabSe
         for (Question_class tmp:currArrayListQuesstionGroupClass.get(currQuesstionGroupClass).getQuestionClassArrayList()
                 ) {
             //tạo 1 tab với tiêu đề ""
-            tabLayout.addTab(tabLayout.newTab().setText(String.valueOf(tmp_index)));
+            tabLayout.addTab(tabLayout.newTab().setText(String.valueOf(tmp_index+1)));
             //đánh dấu chưa làm
             tabLayout.getTabAt(tmp_index).setIcon(R.drawable.star_null);
             tmp_index +=1;
@@ -103,12 +111,14 @@ public class MainActivity extends AppCompatActivity implements TabLayout.OnTabSe
         adapter = new Pager(getSupportFragmentManager(),tmp_index);
         viewPager.setAdapter(adapter);
         adapter.notifyDataSetChanged();
+        txt_question_group_tittle.setText(arrList_question_group.get(currQuesstionGroupClass));
     }
 
 
     private void init_FragmentStatePager() {
         //    todo use FragmentStatePagerAdapter 5:Initializing the tablayout
         tabLayout = (TabLayout) findViewById(R.id.tabLayout);
+        tabLayout.setSelectedTabIndicatorHeight(View.MEASURED_HEIGHT_STATE_SHIFT);
         //Adding the tabs using addTab() method
 //        tabLayout.addTab(tabLayout.newTab().setText("Tab1"));
 //        tabLayout.addTab(tabLayout.newTab().setText("Tab2"));
