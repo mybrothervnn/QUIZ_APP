@@ -6,6 +6,7 @@ import android.view.View;
 import android.webkit.WebView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Objects;
@@ -22,17 +23,7 @@ public class Question_class {
     private int answer_true = 999;
     private int answer_choose = 999;
 
-    public TextView getTrue_view() {
-        return true_view;
-    }
-
-    public void setTrue_view(TextView true_view) {
-        this.true_view = true_view;
-    }
-
     //------------
-    private TextView true_view;
-
     public Question_class(String question_id) {
         this.question_id = question_id;
     }
@@ -40,6 +31,8 @@ public class Question_class {
     public Question_class(String question_id, String question) {
         this.question_id = question_id;
         this.question = question;
+
+
     }
 
     public Question_class(String question, ArrayList<String> answer) {
@@ -78,79 +71,6 @@ public class Question_class {
         result.loadData(question,"text/html; charset=UTF-8",null);
         return result;
     }
-    public ArrayList<TextView> getAnswer_as_TextView(Context context, final Resources resources){
-        final ArrayList<TextView> result = new ArrayList<>();
-        for (int i=0;i< getAnswer().size();i++) {
-            final TextView tmp_TextView = new TextView(context);
-            // layout fill_parent
-            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-            tmp_TextView.setLayoutParams(params);
-            //background
-            tmp_TextView.setBackground(resources.getDrawable(R.drawable.my_border_answer));
-            // padding
-            tmp_TextView.setPadding(20, 50, 20, 50);
-            // add title
-            String tmp_title = null;
-            switch (i) {
-                case 0:
-                    tmp_title = "A   -   ";
-                    break;
-                case 1:
-                    tmp_title = "B   -    ";
-                    break;
-                case 2:
-                    tmp_title = "C   -    ";
-                    break;
-                case 3:
-                    tmp_title = "D   -    ";
-                    break;
-                case 4:
-                    tmp_title = "E   -    ";
-                    break;
-                case 5:
-                    tmp_title = "F   -    ";
-                    break;
-            }
-            tmp_TextView.setText(tmp_title + getAnswer().get(i));
-
-            //Nếu câu này đã trả lời thì hiển thị câu trả lời
-            if (getAnswer_choose() == i) {
-                tmp_TextView.setBackground(resources.getDrawable(R.drawable.my_border_answer_choose));
-                if(getAnswer_true() ==i){
-                    tmp_TextView.setBackground(resources.getDrawable(R.drawable.my_border_answer_choose_true));
-                }else{
-                    tmp_TextView.setBackground(resources.getDrawable(R.drawable.my_border_answer_true));
-                }
-            }
-            //Câu trả lời đúng
-            if (getAnswer_true() == i){
-                setTrue_view(tmp_TextView);
-            }
-            //event
-            final int finalI = i;
-            tmp_TextView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    if (getAnswer_choose() == 999) {
-                        setAnswer_choose(finalI);
-                        getTrue_view().setBackground(resources.getDrawable(R.drawable.my_border_answer_choose));
-                        //set câu đã chọn
-                        getTrue_view().setBackground(resources.getDrawable(R.drawable.my_border_answer_true));
-                        if (getTrue_view() == tmp_TextView){
-                            tmp_TextView.setBackground(resources.getDrawable(R.drawable.my_border_answer_choose_true));
-                            MainActivity.tabLayout.getTabAt(MainActivity.tabLayout.getSelectedTabPosition()).setIcon(R.drawable.star_ok);
-                        }else {
-                            getTrue_view().setBackground(resources.getDrawable(R.drawable.my_border_answer_true));
-                            MainActivity.tabLayout.getTabAt(MainActivity.tabLayout.getSelectedTabPosition()).setIcon(R.drawable.star_ng);
-                        }
-                    }
-                }
-            });
-            //end_ add for result
-            result.add(tmp_TextView);
-        }
-        return result;
-    }
 
     public void setQuestion(String question) {
         this.question = question;
@@ -181,7 +101,7 @@ public class Question_class {
     }
     //ADD FUNCTION
     public boolean isAnswered(){
-        return answer_choose > 0 && answer_choose != 999;
+        return answer_choose < 999;
     }
     public int coun_answer(){
         return answer.size();

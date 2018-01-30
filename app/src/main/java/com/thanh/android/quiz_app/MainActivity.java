@@ -5,21 +5,23 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.MenuItemCompat;
-import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
 
-public class MainActivity extends AppCompatActivity implements TabLayout.OnTabSelectedListener{
+public class MainActivity extends AppCompatActivity{
     // Danh sach tên các BỘ câu hỏi dùng để cho người dùng chọn
     public static ArrayList<String> arrList_question_group = new ArrayList<>();
     //Danh sách dữ liệu bộ các câu hỏi.
@@ -32,8 +34,8 @@ public class MainActivity extends AppCompatActivity implements TabLayout.OnTabSe
 
     //    todo use FragmentStatePagerAdapter 4: Declare TabLayout and ViewPager
     public static TabLayout tabLayout;
-    public ViewPager viewPager;
-    Pager adapter;
+    public FrameLayout mFrameLayout;
+    MyFragmentClass my_fragment_class;
     //    todo notification 3: declare layout
     RelativeLayout notificationCount1;
 
@@ -59,10 +61,13 @@ public class MainActivity extends AppCompatActivity implements TabLayout.OnTabSe
     }
 
     private void init() {
+        tabLayout = (TabLayout) findViewById(R.id.tabLayout);
+        mFrameLayout = (FrameLayout) findViewById(R.id.frame_container);
+//        my_fragment_class = new MyFragmentClass();
         txt_question_group_tittle = (TextView) findViewById(R.id.txt_question_tittle);
 
         AI_request_class ai_request_class = new AI_request_class(getApplicationContext());
-        init_FragmentStatePager();
+
         // Truyền danh sách cho danh sách hiển thị bộ câu hỏi
         arrList_question_group.addAll(ai_request_class.getCTG_CD_FV_fromListURL());
         // Danh sách toàn bộ các bộ câu hỏi mà hệ thống yêu cầu phải làm
@@ -73,7 +78,6 @@ public class MainActivity extends AppCompatActivity implements TabLayout.OnTabSe
                 currArrayListQuesstionGroupClass.add(ai_request_class.getQuesstion_group_class_byURL(url));
             }
         }
-
         // Bộ câu hỏi hiển thị
         currQuesstionGroupClass = 3;
         // Câu hỏi hiển thị
@@ -81,75 +85,56 @@ public class MainActivity extends AppCompatActivity implements TabLayout.OnTabSe
         loadQuestionToDisplay(currQuesstionGroupClass);
     }
 
-    private void loadQuestionToDisplay(int currQuesstionGroupClass) {
-        //remove tab
-        //remove viewPager
-
-        //create tab
-        //create pager
-        //------------------------
-        //remove tab
-        tabLayout.removeAllTabs();
-        //remove viewPager
-        viewPager.removeAllViews();
-
-        //create tab
-        int tmp_index = 0;
-        for (Question_class tmp:currArrayListQuesstionGroupClass.get(currQuesstionGroupClass).getQuestionClassArrayList()
-                ) {
-            //tạo 1 tab với tiêu đề ""
-            tabLayout.addTab(tabLayout.newTab().setText(String.valueOf(tmp_index+1)));
-            //đánh dấu chưa làm
-            tabLayout.getTabAt(tmp_index).setIcon(R.drawable.star_null);
-            tmp_index +=1;
-            //---------
-            //view pager
-//            adapter.addTab();
-//            adapter.notifyDataSetChanged();
-        }
-        //create pager
-        adapter = new Pager(getSupportFragmentManager(),tmp_index);
-        viewPager.setAdapter(adapter);
-        adapter.notifyDataSetChanged();
-        txt_question_group_tittle.setText(arrList_question_group.get(currQuesstionGroupClass));
-    }
-
-
-    private void init_FragmentStatePager() {
-        //    todo use FragmentStatePagerAdapter 5:Initializing the tablayout
-        tabLayout = (TabLayout) findViewById(R.id.tabLayout);
-        tabLayout.setSelectedTabIndicatorHeight(View.MEASURED_HEIGHT_STATE_SHIFT);
-        //Adding the tabs using addTab() method
-//        tabLayout.addTab(tabLayout.newTab().setText("Tab1"));
-//        tabLayout.addTab(tabLayout.newTab().setText("Tab2"));
-//        tabLayout.addTab(tabLayout.newTab().setText("Tab3"));
-        tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
-
-//    todo use FragmentStatePagerAdapter 6:Initializing viewPager
-        viewPager = (ViewPager) findViewById(R.id.pager);
-
-//    todo use FragmentStatePagerAdapter 7:Creating our pager adapter
-        adapter = new Pager(getSupportFragmentManager(), tabLayout.getTabCount());
-
-//    todo use FragmentStatePagerAdapter 8:Adding adapter to pager
-        viewPager.setAdapter(adapter);
-
-//    todo use FragmentStatePagerAdapter 9:Adding onTabSelectedListener to swipe views
-        tabLayout.setOnTabSelectedListener(this);
-//    todo use FragmentStatePagerAdapter 10:Adding addOnPageChangeListener to swipe Tab -> Pager.java
-        viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
-    }
-
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         //        todo notification 11: mutiply data return from  QuestionGroupDisplay.java ->
         //        todo notification 12_END: edit theme for popup menu to diaglog in AndroidManifest.xml
         if(currQuesstionGroupClass != currQuesstionGroupClass_old) {
-            Toast.makeText(this, String.valueOf(data.getIntExtra("position_return", 0)), Toast.LENGTH_SHORT).show();
+//            Toast.makeText(this, String.valueOf(data.getIntExtra("position_return", 0)), Toast.LENGTH_SHORT).show();
             loadQuestionToDisplay(currQuesstionGroupClass);
         }
+    }
+
+    private void loadQuestionToDisplay(int currQuesstionGroupClass) {
+        tabLayout.removeAllTabs();
+        // Tạo ra 10 tab
+        for (int i=0;i<currArrayListQuesstionGroupClass.get(currQuesstionGroupClass).getQuestionClassArrayList().size();i++){
+            tabLayout.addTab(
+                    tabLayout.newTab()
+                            .setText("" + (i + 1)));
+            //đánh dấu chưa làm
+            tabLayout.getTabAt(i).setIcon(R.drawable.star_null);
+            tabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+                @Override
+                public void onTabSelected(TabLayout.Tab tab) {
+                    setCurrentTabFragment(tab.getPosition());
+                }
+
+                @Override
+                public void onTabUnselected(TabLayout.Tab tab) {
+                }
+                @Override
+                public void onTabReselected(TabLayout.Tab tab) {
+                }
+            });
+        }
+        tabLayout.getTabAt(1).select();
+        tabLayout.getTabAt(0).select();
+
+    }
+
+    private void setCurrentTabFragment(int position) {
+        replaceFragment(position);
+    }
+
+    private void replaceFragment(int position) {
+        android.support.v4.app.FragmentManager fm = getSupportFragmentManager();
+        FragmentTransaction ft = fm.beginTransaction();
+        my_fragment_class = MyFragmentClass.newInstance(position);
+        ft.replace(R.id.frame_container, my_fragment_class);
+        ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+        ft.commit();
     }
 
     //todo toolbar 4: override method when Create menu
@@ -170,7 +155,7 @@ public class MainActivity extends AppCompatActivity implements TabLayout.OnTabSe
             @Override
             public void onClick(View view) {
 //                Toast.makeText(MainActivity.this, "Tim hoai eo ra, buc qua- cuoi cung cung phai ra cho :D", Toast.LENGTH_SHORT).show();
-                Intent intent  = new Intent(getApplicationContext(),activity_question_group_display.class);
+                Intent intent  = new Intent(getApplicationContext(), activity_question_group_display.class);
                 startActivityForResult(intent,1);
             }
         });
@@ -186,24 +171,20 @@ public class MainActivity extends AppCompatActivity implements TabLayout.OnTabSe
 
         if (id == R.id.action_test1) {
             //    todo use FragmentStatePagerAdapter 14_END: test remove tab.
-            tabLayout.removeTab(tabLayout.getTabAt(1));
+//            tabLayout.removeTab(tabLayout.getTabAt(1));
             return true;
         }
         if (id == R.id.action_test2) {
             //    todo use FragmentStatePagerAdapter 15: test add tab
-            tabLayout.addTab(tabLayout.newTab().setText("added tab OK"));
+//            tabLayout.addTab(tabLayout.newTab().setText("added tab OK"));
             return true;
         }
         if (id == R.id.action_test3) {
             //    todo use FragmentStatePagerAdapter 16: test get item
-            adapter.getItem(tabLayout.getTabCount()-1);
-            adapter.notifyDataSetChanged();
             return true;
         }
         if (id == R.id.action_test4) {
             //    todo use FragmentStatePagerAdapter 17: test add fragment
-            adapter.addTab();
-            adapter.notifyDataSetChanged();
             return true;
         }
         if (id == R.id.action_test5) {
@@ -216,18 +197,4 @@ public class MainActivity extends AppCompatActivity implements TabLayout.OnTabSe
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    public void onTabSelected(TabLayout.Tab tab) {
-        viewPager.setCurrentItem(tab.getPosition());
-    }
-
-    @Override
-    public void onTabUnselected(TabLayout.Tab tab) {
-
-    }
-
-    @Override
-    public void onTabReselected(TabLayout.Tab tab) {
-
-    }
 }
