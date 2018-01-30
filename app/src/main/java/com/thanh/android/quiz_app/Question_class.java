@@ -18,7 +18,7 @@ public class Question_class {
     private String question_id;
     private String question;
     private ArrayList<String> answer;
-    public ArrayList<TextView> textViewArrayList;
+//    public ArrayList<TextView> textViewArrayList;
     //------------
     private int answer_true = 999;
     private int answer_choose = 999;
@@ -41,7 +41,7 @@ public class Question_class {
     public Question_class(String question_id, String question) {
         this.question_id = question_id;
         this.question = question;
-        this.textViewArrayList = new ArrayList<>();
+//        this.textViewArrayList = new ArrayList<>();
     }
 
     public Question_class(String question, ArrayList<String> answer) {
@@ -80,77 +80,77 @@ public class Question_class {
         result.loadData(question,"text/html; charset=UTF-8",null);
         return result;
     }
-    public ArrayList<TextView> getAnswer_as_TextView(final Context context, final Resources resources){
-        for (int i=0;i< getAnswer().size();i++) {
-            final TextView tmp_TextView = new TextView(context);
-            // layout fill_parent
-            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-            tmp_TextView.setLayoutParams(params);
-            //background
-            tmp_TextView.setBackground(resources.getDrawable(R.drawable.my_border_answer));
-            // padding
-            tmp_TextView.setPadding(20, 50, 20, 50);
-            // add title
-            String tmp_title = null;
-            switch (i) {
-                case 0:
-                    tmp_title = "A   -   ";
-                    break;
-                case 1:
-                    tmp_title = "B   -    ";
-                    break;
-                case 2:
-                    tmp_title = "C   -    ";
-                    break;
-                case 3:
-                    tmp_title = "D   -    ";
-                    break;
-                case 4:
-                    tmp_title = "E   -    ";
-                    break;
-                case 5:
-                    tmp_title = "F   -    ";
-                    break;
-            }
-            tmp_TextView.setText(tmp_title + getAnswer().get(i));
-
-//            //Nếu câu này đã trả lời thì hiển thị câu trả lời
-//            if (getAnswer_choose() == i) {
-//                tmp_TextView.setBackground(resources.getDrawable(R.drawable.my_border_answer_choose));
-//                if(getAnswer_true() ==i){
-//                    tmp_TextView.setBackground(resources.getDrawable(R.drawable.my_border_answer_choose_true));
-//                }else{
-//                    tmp_TextView.setBackground(resources.getDrawable(R.drawable.my_border_answer_true));
-//                }
+//    public ArrayList<TextView> getAnswer_as_TextView(final Context context, final Resources resources){
+//        for (int i=0;i< getAnswer().size();i++) {
+//            final TextView tmp_TextView = new TextView(context);
+//            // layout fill_parent
+//            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+//            tmp_TextView.setLayoutParams(params);
+//            //background
+//            tmp_TextView.setBackground(resources.getDrawable(R.drawable.my_border_answer));
+//            // padding
+//            tmp_TextView.setPadding(20, 50, 20, 50);
+//            // add title
+//            String tmp_title = null;
+//            switch (i) {
+//                case 0:
+//                    tmp_title = "A   -   ";
+//                    break;
+//                case 1:
+//                    tmp_title = "B   -    ";
+//                    break;
+//                case 2:
+//                    tmp_title = "C   -    ";
+//                    break;
+//                case 3:
+//                    tmp_title = "D   -    ";
+//                    break;
+//                case 4:
+//                    tmp_title = "E   -    ";
+//                    break;
+//                case 5:
+//                    tmp_title = "F   -    ";
+//                    break;
 //            }
-
-            //event
-            final int finalI = i;
-//            tmp_TextView.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View view) {
-//                    if (getAnswer_choose() == 999) {
-//                        setAnswer_choose(finalI);
-//                        //set câu đã chọn
-//                        textViewArrayList.get(finalI).setBackground(resources.getDrawable(R.drawable.my_border_answer_choose));
-//                        //hiển thị câu đúng
-//                        textViewArrayList.get(getAnswer_true()).setBackground(resources.getDrawable(R.drawable.my_border_answer_true));
+//            tmp_TextView.setText(tmp_title + getAnswer().get(i));
 //
-//                        if (isChoose_true()){
-//                            textViewArrayList.get(finalI).setBackground(resources.getDrawable(R.drawable.my_border_answer_choose_true));
-//                            MainActivity.tabLayout.getTabAt(MainActivity.tabLayout.getSelectedTabPosition()).setIcon(R.drawable.star_ok);
-//                        }else {
-//                            textViewArrayList.get(finalI).setBackground(resources.getDrawable(R.drawable.my_border_answer_choose));
-//                            MainActivity.tabLayout.getTabAt(MainActivity.tabLayout.getSelectedTabPosition()).setIcon(R.drawable.star_ng);
-//                        }
-//                    }
-//                }
-//            });
-            //end_ add for result
-            textViewArrayList.add(tmp_TextView);
-        }
-        return textViewArrayList;
-    }
+////            //Nếu câu này đã trả lời thì hiển thị câu trả lời
+////            if (getAnswer_choose() == i) {
+////                tmp_TextView.setBackground(resources.getDrawable(R.drawable.my_border_answer_choose));
+////                if(getAnswer_true() ==i){
+////                    tmp_TextView.setBackground(resources.getDrawable(R.drawable.my_border_answer_choose_true));
+////                }else{
+////                    tmp_TextView.setBackground(resources.getDrawable(R.drawable.my_border_answer_true));
+////                }
+////            }
+//
+//            //event
+//            final int finalI = i;
+////            tmp_TextView.setOnClickListener(new View.OnClickListener() {
+////                @Override
+////                public void onClick(View view) {
+////                    if (getAnswer_choose() == 999) {
+////                        setAnswer_choose(finalI);
+////                        //set câu đã chọn
+////                        textViewArrayList.get(finalI).setBackground(resources.getDrawable(R.drawable.my_border_answer_choose));
+////                        //hiển thị câu đúng
+////                        textViewArrayList.get(getAnswer_true()).setBackground(resources.getDrawable(R.drawable.my_border_answer_true));
+////
+////                        if (isChoose_true()){
+////                            textViewArrayList.get(finalI).setBackground(resources.getDrawable(R.drawable.my_border_answer_choose_true));
+////                            MainActivity.tabLayout.getTabAt(MainActivity.tabLayout.getSelectedTabPosition()).setIcon(R.drawable.star_ok);
+////                        }else {
+////                            textViewArrayList.get(finalI).setBackground(resources.getDrawable(R.drawable.my_border_answer_choose));
+////                            MainActivity.tabLayout.getTabAt(MainActivity.tabLayout.getSelectedTabPosition()).setIcon(R.drawable.star_ng);
+////                        }
+////                    }
+////                }
+////            });
+//            //end_ add for result
+//            textViewArrayList.add(tmp_TextView);
+//        }
+//        return textViewArrayList;
+//    }
 
     private void display_answer(Context context, final Resources resources) {
         for (int i=0;i < answer.size();i++ ){

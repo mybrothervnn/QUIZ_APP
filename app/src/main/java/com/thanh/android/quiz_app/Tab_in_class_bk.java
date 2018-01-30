@@ -7,15 +7,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
 import android.widget.LinearLayout;
-import android.widget.TextView;
-
-import java.util.ArrayList;
 
 /**
- * Created by d_thanh on 2018/01/24.
+ * Created by Administrator on 25/01/2018.
  */
 
-public class Tab_bk extends Fragment {
+public class Tab_in_class_bk extends Fragment {
     Question_class myQuestionClass;
     View result;
     LinearLayout ln_answer;
@@ -48,7 +45,7 @@ public class Tab_bk extends Fragment {
         // add các câu trả lời.
         for (int i=0;i< myQuestionClass.getAnswer().size();i++ ) {
 //            Toast.makeText(getContext(), "test thoi", Toast.LENGTH_SHORT).show();
-//            showln_answer.addView(myQuestionClass.getAnswer_as_TextView(getContext(), getResources()).get(i));
+//            ln_answer.addView(myQuestionClass.getAnswer_as_TextView(getContext(), getResources()).get(i));
         }
         return result;
     }
