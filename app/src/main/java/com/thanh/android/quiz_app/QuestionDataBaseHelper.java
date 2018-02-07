@@ -25,8 +25,8 @@ public class QuestionDataBaseHelper extends SQLiteOpenHelper{
     //The Android's default system path of your application database.
     private static String DB_PATH = "/data/data/com.thanh.android.quiz_app/databases/";
 
-    private static String DB_NAME = "TRAC_NGHIEM.s3db";
-
+//    private static String DB_NAME = "TRAC_NGHIEM_EN_KID.s3db";
+    private String DB_NAME ;
     private SQLiteDatabase myDataBase;
 
     private final Context myContext;
@@ -39,8 +39,8 @@ public class QuestionDataBaseHelper extends SQLiteOpenHelper{
      * @param context
      */
     public QuestionDataBaseHelper(Context context) {
-
-        super(context, DB_NAME, null, 1);
+        super(context, MainActivity.DB_NAME, null, 1);
+        this.DB_NAME = MainActivity.DB_NAME;
         this.myContext = context;
         //        //CONNECT  DB
         try {
@@ -141,7 +141,7 @@ public class QuestionDataBaseHelper extends SQLiteOpenHelper{
 
         //Open the database
         String myPath = DB_PATH + DB_NAME;
-        myDataBase = SQLiteDatabase.openDatabase(myPath, null, SQLiteDatabase.OPEN_READONLY);
+        myDataBase = SQLiteDatabase.openDatabase(myPath, null, SQLiteDatabase.OPEN_READWRITE);
 
     }
 
@@ -171,7 +171,7 @@ public class QuestionDataBaseHelper extends SQLiteOpenHelper{
     public ArrayList<String> getCtgList() {
         ArrayList<String> result = new ArrayList<>();
         // load all word from db then add to ListWord
-        String selectSQL = "SELECT VALUE from CTG_MST where PARENT_CTG_CD_FV = '83' and LEVEL_CD_FV = '4' limit 20";
+        String selectSQL = "SELECT VALUE from CTG_MST where PARENT_CTG_CD_FV = '83' and LEVEL_CD_FV = '4'";
         Cursor cursor = myDataBase.rawQuery(selectSQL, null);
         while (cursor.moveToNext()) {
             result.add(cursor.getString(0));
@@ -223,5 +223,70 @@ public class QuestionDataBaseHelper extends SQLiteOpenHelper{
         cursor.close();
         return result;
     }
+    public ArrayList<String> getListURL(){
+        ArrayList<String> result = new ArrayList<>();
+        String selectSQL = "select URL_VALUE from URL_TBL where COMPLETE_FLAG_FN = 1";
+        Cursor cursor = myDataBase.rawQuery(selectSQL, null);
+        while (cursor.moveToNext()) {
+            result.add(cursor.getString(0));
+        }
+        cursor.close();
+        return result;
+    }
+    public void createTable_ACTION_INFO(){
+        String updateQuery ="CREATE TABLE IF NOT EXISTS [ACTION_INFO] (\n" +
+                                                                        "[UPDATE_DATE_FD] TIMESTAMP DEFAULT CURRENT_TIMESTAMP NULL,\n" +
+                                                                        "[URL_VALUE] TEXT  NULL,\n" +
+                                                                        "[QUESTION_ID] TEXT  NULL,\n" +
+                                                                        "[ACTION_TYPE] TEXT  NULL,\n" +
+                                                                        "[ACTION_VALUE] TEXT  NULL\n" +
+                                                                        ");";
+        Cursor c= myDataBase.rawQuery(updateQuery, null);
 
+        c.moveToFirst();
+        c.close();
+    }
+    public void insert_ACTION_INFO(String url_value,String question_id, String action_type, String action_value){
+        String sql_param = "'"+url_value+"'" + ","
+                          +"'"+question_id+"'" + ","
+                          +"'"+action_type+"'" + ","
+                          +"'"+action_value+"'";
+        String updateQuery ="insert into ACTION_INFO (URL_VALUE,QUESTION_ID,ACTION_TYPE,ACTION_VALUE) values ("+sql_param+");";
+        Cursor c= myDataBase.rawQuery(updateQuery, null);
+
+        c.moveToFirst();
+//        Toast.makeText(myContext, "Please check result of "+ url_value, Toast.LENGTH_SHORT).show();
+        c.close();
+    }
+    public String get_choose_from_ACTION_INFO(String url_value,String question_id, String action_type){
+        String result = null;
+        String selectSQL = "select ACTION_VALUE from ACTION_INFO where URL_VALUE = '"+url_value+"' and QUESTION_ID = '" +question_id+"' and ACTION_TYPE = '"+action_type+"'" ;
+        Cursor cursor = myDataBase.rawQuery(selectSQL, null);
+        while (cursor.moveToNext()) {
+            result = cursor.getString(0);
+        }
+        cursor.close();
+        return result;
+    }
+
+    public void update_status_from_ACTION_INFO(Quesstion_group_class inQuesstion_group_class) {
+        for (int i=0;i<inQuesstion_group_class.getQuestionClassArrayList().size();i++){
+            //Lấy câu đã chọn của câu hỏi này
+            String choose_num = get_choose_from_ACTION_INFO(inQuesstion_group_class.getQuestion_URL_VALUE(),String.valueOf(i),"2");
+            //set nó cho câu hỏi đó
+            if (choose_num ==null) choose_num = "999";
+            inQuesstion_group_class
+                    .getQuestionClassArrayList()
+                    .get(i)
+                    .setAnswer_choose(Integer.parseInt(choose_num));
+        }
+    }
+
+    public void delete_choose_Action_info(String question_URL_VALUE) {
+        String updateQuery ="delete from ACTION_INFO where ACTION_TYPE=2 and URL_VALUE = '"+question_URL_VALUE+"'";
+        Cursor c= myDataBase.rawQuery(updateQuery, null);
+
+        c.moveToFirst();
+        c.close();
+    }
 }

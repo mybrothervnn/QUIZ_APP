@@ -13,21 +13,48 @@
     <item
         android:id="@+id/action_test1"
         android:orderInCategory="100"
-        android:title="tabLayout.removeTab(1)"/>
+        android:title="DBNAME=TRAC_NGHIEM_IQ.s3db"/>
     <item
         android:id="@+id/action_test2"
-        android:title="tabLayout.addTab(" />
+        android:orderInCategory="101"
+        android:title="DBNAME=TRAC_NGHIEM_EN_KID.s3db" />
     <item
         android:id="@+id/action_test3"
-        android:title="adapter.getItem(" />
+        android:orderInCategory="102"
+        android:title="DBNAME=TRAC_NGHIEM_EN_CB.s3db" />
+    <item
+        android:orderInCategory="103"
+        android:title="----------------------" />
     <item
         android:id="@+id/action_test4"
-        android:title="adapter.addTab()" />
+        android:orderInCategory="104"
+        android:title="DBNAME=TRAC_NGHIEM_TOAN_2.s3db" />
     <item
         android:id="@+id/action_test5"
-        android:title="Badge Item 5" />
-
+        android:orderInCategory="105"
+        android:title="DBNAME=TRAC_NGHIEM_TOAN_3.s3db" />
     <item
         android:id="@+id/action_test6"
-        android:title="Badge Item 6" />
+        android:orderInCategory="106"
+        android:title="DBNAME=TRAC_NGHIEM_TOAN_4.s3db" />
+    <item
+        android:id="@+id/action_test7"
+        android:orderInCategory="107"
+        android:title="DBNAME=TRAC_NGHIEM_TOAN_5.s3db" />
+    <item
+        android:id="@+id/action_test8"
+        android:orderInCategory="108"
+        android:title="DBNAME=TRAC_NGHIEM_LOP_8.s3db" />
+    <item
+        android:orderInCategory="109"
+        android:title="----------------------" />
+    <item
+        android:id="@+id/action_test9"
+        android:orderInCategory="110"
+        android:title="TRAC_NGHIEM.s3db" />
+
+    <item
+        android:id="@+id/action_test10"
+        android:orderInCategory="111"
+        android:title="delete all ACTION_INFO_TAB" />
 </menu>

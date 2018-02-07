@@ -12,16 +12,23 @@ import java.util.ArrayList;
 public class Quesstion_group_class {
     private String question_URL_VALUE;
     private ArrayList<Question_class> questionClassArrayList;
+    QuestionDataBaseHelper questionDataBaseHelper;
     Context myContext;
     //
 
     public Quesstion_group_class(String question_URL_VALUE,Context myContext) {
         this.myContext = myContext;
         this.question_URL_VALUE = question_URL_VALUE;
-        QuestionDataBaseHelper questionDataBaseHelper = new QuestionDataBaseHelper(myContext);
+        this.questionDataBaseHelper = new QuestionDataBaseHelper(myContext);
         this.questionClassArrayList = new ArrayList<>();
         questionClassArrayList.addAll(questionDataBaseHelper.get_questionClassArrayList_from_db(question_URL_VALUE));
+        questionDataBaseHelper.update_status_from_ACTION_INFO(this);
     }
+
+
+
+
+
     public int count_question(){
         return questionClassArrayList.size();
     }
@@ -41,6 +48,12 @@ public class Quesstion_group_class {
     public void setQuestionClassArrayList(ArrayList<Question_class> questionClassArrayList) {
         this.questionClassArrayList = questionClassArrayList;
     }
+    public void insert_ACTION_INFO(String question_id,String action_type, String action_value){
+        questionDataBaseHelper.insert_ACTION_INFO(question_URL_VALUE,question_id,action_type,action_value);
+    }
+    public String get_choose_from_ACTION_INFO(String question_id,String action_type){
+        return questionDataBaseHelper.get_choose_from_ACTION_INFO(question_URL_VALUE,question_id,action_type);
+    }
     public String toString(){
         String tmp_string = "_____Quesstion_group_class_____\n";
         tmp_string =tmp_string +"question_URL_VALUE="+ question_URL_VALUE + "\n";
@@ -49,5 +62,12 @@ public class Quesstion_group_class {
             tmp_string = tmp_string + questionClassArrayList.get(i).toString();
         }
         return tmp_string;
+    }
+
+    public void delete_choose_Action_info() {
+        questionDataBaseHelper.delete_choose_Action_info(question_URL_VALUE);
+    }
+    public String get_questionGroup_tittle(){
+        return questionDataBaseHelper.getCTG_NAME_from_URL(question_URL_VALUE);
     }
 }

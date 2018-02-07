@@ -2,6 +2,7 @@ package com.thanh.android.quiz_app;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
@@ -15,6 +16,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -26,6 +28,8 @@ public class MainActivity extends AppCompatActivity{
     public static ArrayList<String> arrList_question_group = new ArrayList<>();
     //Danh sách dữ liệu bộ các câu hỏi.
     public static ArrayList<Quesstion_group_class> currArrayListQuesstionGroupClass;
+
+    public static String DB_NAME = "TRAC_NGHIEM_LOP_8.s3db";
     // Bộ câu hỏi hiển thị
     public static int currQuesstionGroupClass;
     public static int currQuesstionGroupClass_old;
@@ -38,8 +42,13 @@ public class MainActivity extends AppCompatActivity{
     MyFragmentClass my_fragment_class;
     //    todo notification 3: declare layout
     RelativeLayout notificationCount1;
+    TextView notificationCount_number;
 
     TextView txt_question_group_tittle;
+    TextView fab;
+    ProgressBar progressBar;
+    private Handler progressBarHandler = new Handler();
+    private int status = 0;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,20 +57,27 @@ public class MainActivity extends AppCompatActivity{
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         //todo toolbar 3: set for Actionbar of AppCompatActivity
         setSupportActionBar(toolbar);
-
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
         init();
     }
 
     private void init() {
         tabLayout = (TabLayout) findViewById(R.id.tabLayout);
+        tabLayout.setSelectedTabIndicatorColor(getResources().getColor(R.color.lime_500));
+        tabLayout.setSelectedTabIndicatorHeight(View.MEASURED_HEIGHT_STATE_SHIFT);
+
+        //Process bar
+        progressBar = (ProgressBar) findViewById(R.id.progressBar);
+        //-- fab
+        fab = (TextView) findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                update_process_bar(150);
+            }
+//                Snackbar.make(view, "Chúc mừng bạn đã vượt qua kỷ lục của câu hỏi này !", Snackbar.LENGTH_LONG).show();
+        });
+
+
         mFrameLayout = (FrameLayout) findViewById(R.id.frame_container);
 //        my_fragment_class = new MyFragmentClass();
         txt_question_group_tittle = (TextView) findViewById(R.id.txt_question_tittle);
@@ -69,20 +85,63 @@ public class MainActivity extends AppCompatActivity{
         AI_request_class ai_request_class = new AI_request_class(getApplicationContext());
 
         // Truyền danh sách cho danh sách hiển thị bộ câu hỏi
+        arrList_question_group = new ArrayList<>();
         arrList_question_group.addAll(ai_request_class.getCTG_CD_FV_fromListURL());
         // Danh sách toàn bộ các bộ câu hỏi mà hệ thống yêu cầu phải làm
-        if (currArrayListQuesstionGroupClass == null) {
-            currArrayListQuesstionGroupClass = new ArrayList<>();
-            for (String url:ai_request_class.getListURL()
-                    ) {
-                currArrayListQuesstionGroupClass.add(ai_request_class.getQuesstion_group_class_byURL(url));
-            }
+        currArrayListQuesstionGroupClass = null;
+        currArrayListQuesstionGroupClass = new ArrayList<>();
+        for (String url:ai_request_class.getListURL()
+                ) {
+            currArrayListQuesstionGroupClass.add(ai_request_class.getQuesstion_group_class_byURL(url));
         }
+
         // Bộ câu hỏi hiển thị
-        currQuesstionGroupClass = 3;
+        currQuesstionGroupClass = 0;
         // Câu hỏi hiển thị
-        currQuesstionClass = 1;
+        currQuesstionClass = 0;
         loadQuestionToDisplay(currQuesstionGroupClass);
+    }
+
+    private void update_process_bar(final int i) {
+        progressBar.setMax(i);
+        //tạo 1 thread để tăng trang thái status của progress
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while(status <i){
+                    //tăng trạng thái của progress
+                    status = status +1 ;
+                    try {
+                        //nghỉ 1 giây trước khi update giá trị mới của progressbar
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    // sử dụng Handler để set lại giá trị mới cho progressbar trong 1 tiến trình khác
+                    progressBarHandler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            //update giá trị progressbar
+                            progressBar.setProgress(status);
+                            // update giá trị ở TextView
+                            fab.setText(status+"/"+i+" giây");
+                        }
+                    });
+                }
+                if (status >= 100){
+                    try {
+                        //nghỉ 1 giây sau khi kết thúc update progressbar
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    //set lại trạng thái cho progressbar để load lại khi bấm vào nút lần tiếp theo
+                    status = 0;
+
+                }
+            }
+
+        }).start();//start Thread
     }
 
     @Override
@@ -96,19 +155,53 @@ public class MainActivity extends AppCompatActivity{
         }
     }
 
-    private void loadQuestionToDisplay(int currQuesstionGroupClass) {
-        tabLayout.removeAllTabs();
+    private void loadQuestionToDisplay(final int currQuesstionGroupClass) {
+        //hiển thị tiêu đề
+        txt_question_group_tittle.setText(currArrayListQuesstionGroupClass.get(currQuesstionGroupClass).get_questionGroup_tittle());
         // Tạo ra 10 tab
+        tabLayout.removeAllTabs();
         for (int i=0;i<currArrayListQuesstionGroupClass.get(currQuesstionGroupClass).getQuestionClassArrayList().size();i++){
             tabLayout.addTab(
                     tabLayout.newTab()
                             .setText("" + (i + 1)));
             //đánh dấu chưa làm
-            tabLayout.getTabAt(i).setIcon(R.drawable.star_null);
+            if (currArrayListQuesstionGroupClass.get(currQuesstionGroupClass).getQuestionClassArrayList().get(i).isAnswered()) {
+                if (currArrayListQuesstionGroupClass.get(currQuesstionGroupClass).getQuestionClassArrayList().get(i).isChoose_true()) {
+                    tabLayout.getTabAt(i).setIcon(R.drawable.star_ok);
+                }else{
+                    tabLayout.getTabAt(i).setIcon(R.drawable.star_ng);
+                }
+            }else{
+                tabLayout.getTabAt(i).setIcon(R.drawable.star_null);
+            }
             tabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
                 @Override
                 public void onTabSelected(TabLayout.Tab tab) {
                     setCurrentTabFragment(tab.getPosition());
+                    currQuesstionClass = tab.getPosition();
+                    final TabLayout.Tab tmp_tab = tab;
+                    //todo:xử lý breaking recorded 1
+                    // Sau n giây nếu còn ở tab cũ thì có nghĩa là đang làm bài tab đó, không thì chỉ là lướt qua thôi.
+                    int n = 3;
+                    //tiến trình đếm.
+                    progressBarHandler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            // Do something after 5s = 5000ms
+                            if (currQuesstionClass == tmp_tab.getPosition())
+                                check_if_breaking_records();
+                        }
+                    }, 1000*n);
+                    check_if_breaking_records();
+                }
+
+                private void check_if_breaking_records() {
+                    if (currArrayListQuesstionGroupClass.get(currQuesstionGroupClass).getQuestionClassArrayList().get(currQuesstionClass).isAnswered())
+                        Snackbar.make(null,"Câu này đã trả lời rồi!",Snackbar.LENGTH_SHORT).show();
+                    // if (đã trả lời)
+                        // hiển thị processbar với độ dài là thời gian đã trả lời trước đó. (-> get_recorded)
+                        // sẽ được dừng lại hoặc thay đổi khi (kích chọn câu trả lời) hoặc (hết thời gian)
+
                 }
 
                 @Override
@@ -119,8 +212,11 @@ public class MainActivity extends AppCompatActivity{
                 }
             });
         }
-        tabLayout.getTabAt(1).select();
+        // kich hoạt onTabSelected
+//        tabLayout.getTabAt(1).select();
+        setCurrentTabFragment(0);
         tabLayout.getTabAt(0).select();
+//        tabLayout.notify();
 
     }
 
@@ -148,6 +244,7 @@ public class MainActivity extends AppCompatActivity{
         MenuItemCompat.setActionView(item1, R.layout.notification_count_badge_in_actionbar);
 //        todo notification 6: get layout for get button
         notificationCount1 = (RelativeLayout) MenuItemCompat.getActionView(item1);
+
 //        todo notification 7: get button from layout
         Button tmp = (Button) notificationCount1.findViewById(R.id.button1);
 //        todo notification 8: set event click for display -> QuestionGroupDisplay.java
@@ -159,6 +256,8 @@ public class MainActivity extends AppCompatActivity{
                 startActivityForResult(intent,1);
             }
         });
+        notificationCount_number = (TextView)  MenuItemCompat.getActionView(item1).findViewById(R.id.badge_notification_1);
+        notificationCount_number.setText(String.valueOf(currArrayListQuesstionGroupClass.size()));
         return true;
     }
 //todo toolbar 6_END: override method for event onOptionsItemSelected
@@ -170,27 +269,53 @@ public class MainActivity extends AppCompatActivity{
         int id = item.getItemId();
 
         if (id == R.id.action_test1) {
-            //    todo use FragmentStatePagerAdapter 14_END: test remove tab.
-//            tabLayout.removeTab(tabLayout.getTabAt(1));
+            DB_NAME = "TRAC_NGHIEM_IQ.s3db";
+            recreate();
             return true;
         }
         if (id == R.id.action_test2) {
-            //    todo use FragmentStatePagerAdapter 15: test add tab
-//            tabLayout.addTab(tabLayout.newTab().setText("added tab OK"));
+            DB_NAME = "TRAC_NGHIEM_EN_KID.s3db";
+            recreate();
             return true;
         }
         if (id == R.id.action_test3) {
-            //    todo use FragmentStatePagerAdapter 16: test get item
+            DB_NAME = "TRAC_NGHIEM_EN_CB.s3db";
+            recreate();
             return true;
         }
         if (id == R.id.action_test4) {
-            //    todo use FragmentStatePagerAdapter 17: test add fragment
+            DB_NAME = "TRAC_NGHIEM_TOAN_2.s3db";
+            recreate();
             return true;
         }
         if (id == R.id.action_test5) {
+            DB_NAME = "TRAC_NGHIEM_TOAN_3.s3db";
+            recreate();
             return true;
         }
         if (id == R.id.action_test6) {
+            DB_NAME = "TRAC_NGHIEM_TOAN_4.s3db";
+            recreate();
+            return true;
+        }
+        if (id == R.id.action_test7) {
+            DB_NAME = "TRAC_NGHIEM_TOAN_5.s3db";
+            recreate();
+            return true;
+        }
+        if (id == R.id.action_test8) {
+            DB_NAME = "TRAC_NGHIEM_LOP_8.s3db";
+            recreate();
+            return true;
+        }
+        if (id == R.id.action_test9) {
+            DB_NAME = "TRAC_NGHIEM.s3db";
+            recreate();
+            return true;
+        }
+        if (id == R.id.action_test10) {
+            currArrayListQuesstionGroupClass.get(currQuesstionGroupClass).delete_choose_Action_info();
+            recreate();
             return true;
         }
 

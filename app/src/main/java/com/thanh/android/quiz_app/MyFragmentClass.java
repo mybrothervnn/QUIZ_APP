@@ -6,14 +6,15 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 public class MyFragmentClass extends Fragment {
-    int position;
     public View rootView;
+    long time_start, time_end;
     //Overriden method onCreateView
     public static MyFragmentClass newInstance(int position){
         MyFragmentClass result = new MyFragmentClass();
@@ -25,6 +26,7 @@ public class MyFragmentClass extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        time_start = System.currentTimeMillis();
         final int pos = getArguments().getInt("put_int");
         final Question_class myQuestionClass = MainActivity.currArrayListQuesstionGroupClass.get(MainActivity.currQuesstionGroupClass).getQuestionClassArrayList().get(pos);
 
@@ -32,6 +34,10 @@ public class MyFragmentClass extends Fragment {
 
         WebView myWebView = (WebView) rootView.findViewById(R.id.webview_question) ;
         myWebView.loadData(myQuestionClass.getQuestion(),"text/html; charset=UTF-8",null);
+        //kich thuoc nho hon.
+//        myWebView.setInitialScale(1);
+//        myWebView.getSettings().setLoadWithOverviewMode(true);
+//        myWebView.getSettings().setUseWideViewPort(true);
 
         final LinearLayout ln_layout = (LinearLayout) rootView.findViewById(R.id.ln_answer);
         for (int i=0;i<myQuestionClass.getAnswer().size();i++){
@@ -71,26 +77,61 @@ public class MyFragmentClass extends Fragment {
             result_view.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    myQuestionClass.setAnswer_choose(finalI);
-                    //set choose
-                    view.setBackground(getResources().getDrawable(R.drawable.my_border_answer_choose));
-                    TextView tmp_text_view_true = (TextView)ln_layout.getChildAt(myQuestionClass.getAnswer_true());
-                    tmp_text_view_true.setBackground(getResources().getDrawable(R.drawable.my_border_answer_true));
-                    if (myQuestionClass.isChoose_true()){
-                        view.setBackground(getResources().getDrawable(R.drawable.my_border_answer_choose_true));
-                        MainActivity.tabLayout.getTabAt(MainActivity.tabLayout.getSelectedTabPosition()).setIcon(R.drawable.star_ok);
-                    }else{
-                        MainActivity.tabLayout.getTabAt(MainActivity.tabLayout.getSelectedTabPosition()).setIcon(R.drawable.star_ng);
+                    if (myQuestionClass.getAnswer_choose() == 999) {
+                        myQuestionClass.setAnswer_choose(finalI);
+                        //set click time
+                        time_end = System.currentTimeMillis();
+                        Toast.makeText(getContext(), String.valueOf(time_end-time_start), Toast.LENGTH_SHORT).show();
+                        //set choose
+                        view.setBackground(getResources().getDrawable(R.drawable.my_border_answer_choose));
+                        TextView tmp_text_view_true = (TextView) ln_layout.getChildAt(myQuestionClass.getAnswer_true());
+                        tmp_text_view_true.setBackground(getResources().getDrawable(R.drawable.my_border_answer_true));
+                        if (myQuestionClass.isChoose_true()) {
+                            view.setBackground(getResources().getDrawable(R.drawable.my_border_answer_choose_true));
+                            MainActivity.tabLayout.getTabAt(MainActivity.tabLayout.getSelectedTabPosition()).setIcon(R.drawable.star_ok);
+                        } else {
+                            MainActivity.tabLayout.getTabAt(MainActivity.tabLayout.getSelectedTabPosition()).setIcon(R.drawable.star_ng);
+                        }
+                        //Add thông tin đã click vào Action_info
+                        MainActivity
+                                .currArrayListQuesstionGroupClass
+                                .get(MainActivity.currQuesstionGroupClass)
+                                .insert_ACTION_INFO(String.valueOf(MainActivity.currQuesstionClass) //vd: question thu 5
+                                                    ,"2" // kiểu "chọn câu trả lời nào"
+                                                    ,String.valueOf(finalI)); //giá trị đã chọn vd: chọn câu 3
+                        //todo:xử lý breaking recorded 2
+                        // Nếu trả lời đúng
+                            //nếu process < max của nó thì là đã vượt qua kỷ lục
+                                // nếu được thì dừng processbar
+                                // -> thông báo ra màn hình và (lưu thông tin kỷ lục mới)
+
                     }
 
                 }
             });
             ln_layout.addView(result_view);
         }
+//        String tmp = MainActivity
+//                .currArrayListQuesstionGroupClass
+//                .get(MainActivity.currQuesstionGroupClass)
+//                .get_choose_from_ACTION_INFO(String.valueOf(MainActivity.currQuesstionClass)); //vd: question thu 5
+//        Toast.makeText(getContext(), MainActivity.currQuesstionClass + "_" +tmp, Toast.LENGTH_SHORT).show();
+
         if(myQuestionClass.getAnswer_choose() < 999) {
             TextView tmp_text_vView = (TextView) ln_layout.getChildAt(myQuestionClass.getAnswer_true());
             tmp_text_vView.setBackground(getResources().getDrawable(R.drawable.my_border_answer_true));
+
+            TextView tmp_choose = (TextView) ln_layout
+                    .getChildAt(myQuestionClass.getAnswer_choose());
+                    tmp_choose.setBackground(getResources().getDrawable(R.drawable.my_border_answer_choose));
+            if (myQuestionClass.isChoose_true()){
+                tmp_choose.setBackground(getResources().getDrawable(R.drawable.my_border_answer_choose_true));
+                MainActivity.tabLayout.getTabAt(MainActivity.tabLayout.getSelectedTabPosition()).setIcon(R.drawable.star_ok);
+            } else {
+                MainActivity.tabLayout.getTabAt(MainActivity.tabLayout.getSelectedTabPosition()).setIcon(R.drawable.star_ng);
+            }
         }
+
 
         return rootView;
     }

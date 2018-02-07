@@ -15,25 +15,12 @@ public class AI_request_class {
     public AI_request_class(Context myContext) {
         this.myContext = myContext;
         questionDataBaseHelper = new QuestionDataBaseHelper(myContext);
+        //create ACTION_INFO
+        questionDataBaseHelper.createTable_ACTION_INFO();
     }
 
     public ArrayList<String> getListURL(){
-        ArrayList<String> result = new ArrayList<>();
-        result.add("14030");
-        result.add("14038");
-        result.add("14087");
-        result.add("14088");
-        result.add("14089");
-        result.add("14104");
-        result.add("14105");
-        result.add("14111");
-        result.add("14112");
-        result.add("14027");
-        result.add("13887");
-        result.add("10164");
-        result.add("10074");
-        result.add("10077");
-        result.add("10165");
+        ArrayList<String> result = questionDataBaseHelper.getListURL();
         return result;
     }
     public ArrayList<String> getCTG_CD_FV_fromListURL(){
